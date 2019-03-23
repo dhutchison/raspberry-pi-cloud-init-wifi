@@ -10,19 +10,22 @@ downloaded from https://wiki.ubuntu.com/ARM/RaspberryPi.
 
 ## Script preparations
 
-* Customize time zone and hostname in [settings-public.sh]().
+* Customize time zone and hostname in [settings-public.sh](settings-public.sh).
 * Create the file `settings-private.sh` to set up shell-variables as shown in
-  [settings-private-dummy.sh]().
-* Customize the WiFi configuration in [user-data-template]() if needed.
-* Remove the argument `ipv6.disable=1` from [system-boot/cmdline.txt]() if
-  you have a network connection that can use ipv6.
-* Customize the package selection in [system-boot/cloud-init/setup.sh]().
+  [settings-private-dummy.sh](settings-private-dummy.sh).
+* Customize the WiFi configuration in [user-data-template](user-data-template)
+  if needed.
+* Remove the argument `ipv6.disable=1` from
+  [system-boot/cmdline.txt](system-boot/cmdline.txt) if you have a network
+  connection that can use ipv6.
+* Customize the package selection in
+  [system-boot/cloud-init/setup.sh](system-boot/cloud-init/setup.sh).
 
 ## Setup procedure
 
-* Run the script [config.sh]() and check the output in
+* Run the script [config.sh](config.sh) and check the output in
   `system-boot/cloud-init/user-data`.
 * Write the Ubuntu server image to an SD card.
-* Copy the contents of [system-boot/]() to the newly created boot partition
-  on the SD card.
+* Copy the contents of [system-boot/](system-boot/) to the newly created boot
+  partition on the SD card.
 * Boot the Raspberry Pi with the SD card.
