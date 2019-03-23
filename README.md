@@ -8,9 +8,14 @@ This project is tested with
 `ubuntu-18.04.2-preinstalled-server-arm64+raspi3.img.xz`
 downloaded from https://wiki.ubuntu.com/ARM/RaspberryPi.
 
+The scripts set up cloud-init using the boot partition on the installation SD
+card as a NoCloud datasource. A user account with key-authorized SSH login is
+prepared for the user running the config script.
+
 ## Script preparations
 
-* Customize time zone and hostname in [settings-public.sh](settings-public.sh).
+* Customize time zone, hostname, and WiFi country code in
+  [settings-public.sh](settings-public.sh).
 * Create the file `settings-private.sh` to set up shell-variables as shown in
   [settings-private-dummy.sh](settings-private-dummy.sh).
 * Customize the WiFi configuration in [user-data-template](user-data-template)
