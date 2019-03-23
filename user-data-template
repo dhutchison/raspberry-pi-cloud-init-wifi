@@ -4,6 +4,10 @@
 # configuration doesn't support WiFi, see
 # https://cloudinit.readthedocs.io/en/latest/topics/network-config-format-v2.html.
 
+hostname: $HOSTNAME
+locale: C.UTF-8
+timezone: $TIMEZONE
+
 users:
   - name: $USER
     gecos: $NAME
@@ -45,19 +49,25 @@ runcmd:
   - 'rm /etc/netplan/??-cloud-init.yaml'
   - 'chmod go-r /etc/netplan/config.yaml'
   - 'netplan apply'
-  - 'mv /etc/ssh/sshd_config /etc/ssh/sshd_config.bak'
-  - 'mv /etc/ssh/sshd_config.new /etc/ssh/sshd_config'
+
+  # Disable optional PAM features for faster SSH login
   - 'mv /etc/pam.d/sshd /etc/pam.d/sshd.bak'
   - 'sed "s/^session[ \t]\+optional/#\0/" /etc/pam.d/sshd.bak > /etc/pam.d/sshd'
+
+  # Back up the SSH default config and activate the new config
+  - 'mv /etc/ssh/sshd_config /etc/ssh/sshd_config.bak'
+  - 'mv /etc/ssh/sshd_config.new /etc/ssh/sshd_config'
   - 'service ssh reload'
+
+  # Multi-arch support on aarch64
   - 'dpkg --add-architecture armhf'
+
+  # Set up the WiFi country
   - 'apt-get update'
   - 'apt-get -y install iw'
   - 'iw reg set $WIFI_REGDOMAIN'
   - 'mv /etc/default/crda /etc/default/crda.bak'
   - 'echo REGDOMAIN=$WIFI_REGDOMAIN > /etc/default/crda'
-  - '/bin/sh -e /boot/firmware/cloud-init/setup.sh'
 
-locale: C.UTF-8
-hostname: $HOSTNAME
-timezone: $TIMEZONE
+  # Run optional script for additoinal package setup
+  - '/bin/sh -e /boot/firmware/cloud-init/setup.sh'
