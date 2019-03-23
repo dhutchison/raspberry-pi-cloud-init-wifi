@@ -26,8 +26,8 @@ apt-get -y install\
  usbmount
 
 # Workaround for usbmount bug on Bionic
-mkdir /etc/systemd/system/systemd-udevd.service.d
-echo "[Service]"$'\n'"MountFlags=shared"$'\n' >\
+mkdir -p /etc/systemd/system/systemd-udevd.service.d
+echo "[Service]\nMountFlags=shared\n" >\
  /etc/systemd/system/systemd-udevd.service.d/override.conf
 systemctl daemon-reload
 service systemd-udevd --full-restart
