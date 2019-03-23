@@ -1,0 +1,63 @@
+#cloud-config
+
+# The networking setup is a bit of a hack, because the cloud-init network
+# configuration doesn't support WiFi, see
+# https://cloudinit.readthedocs.io/en/latest/topics/network-config-format-v2.html.
+
+users:
+  - name: $USER
+    gecos: $NAME
+    groups: [adm, docker, netdev, plugdev, sudo, users]
+    sudo: ["ALL=NOPASSWD: /sbin/shutdown, /sbin/reboot, /bin/ls, /bin/cat"]
+    lock_passwd: false
+    shell: /bin/bash
+    passwd: $PASSWD
+    ssh_authorized_keys:
+      - $SSH_ID_RSA_PUB
+
+write_files:
+  - content: |
+        network:
+          version: 2
+          wifis:
+            wlan0:
+              dhcp4: true
+              access-points:
+                "$WIFI_SSID":
+                  password: "$WIFI_PASSWD"
+    path: /etc/netplan/config.yaml
+  - content: |
+        PasswordAuthentication no
+        ChallengeResponseAuthentication no
+        UsePAM yes
+        X11Forwarding yes
+        PrintMotd no
+        PrintLastLog no
+        AcceptEnv LANG LC_*
+        Subsystem sftp /usr/lib/openssh/sftp-server
+    path: /etc/ssh/sshd_config.new
+
+bootcmd:
+  - 'systemctl disable systemd-networkd-wait-online.service'
+  - 'systemctl mask systemd-networkd-wait-online.service'
+
+runcmd:
+  - 'rm /etc/netplan/??-cloud-init.yaml'
+  - 'chmod go-r /etc/netplan/config.yaml'
+  - 'netplan apply'
+  - 'mv /etc/ssh/sshd_config /etc/ssh/sshd_config.bak'
+  - 'mv /etc/ssh/sshd_config.new /etc/ssh/sshd_config'
+  - 'mv /etc/pam.d/sshd /etc/pam.d/sshd.bak'
+  - 'sed "s/^session[ \t]\+optional/#\0/" /etc/pam.d/sshd.bak > /etc/pam.d/sshd'
+  - 'service ssh reload'
+  - 'dpkg --add-architecture armhf'
+  - 'apt-get update'
+  - 'apt-get -y install iw'
+  - 'iw reg set $WIFI_REGDOMAIN'
+  - 'mv /etc/default/crda /etc/default/crda.bak'
+  - 'echo REGDOMAIN=$WIFI_REGDOMAIN > /etc/default/crda'
+  - '/bin/sh -e /boot/firmware/cloud-init/setup.sh'
+
+locale: C.UTF-8
+hostname: $HOSTNAME
+timezone: $TIMEZONE
