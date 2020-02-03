@@ -2,12 +2,14 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Clean out the cloud-init items as no longer needed
 apt-get -y purge\
  cloud-init cloud-guest-utils\
  cloud-initramfs-copymods cloud-initramfs-dyn-netconf\
  open-iscsi
 rm -rf /etc/cloud/ /var/lib/cloud/
 
+# Update packages, overwriting any configuration files
 apt-get update
 
 apt-get -y\
@@ -15,21 +17,10 @@ apt-get -y\
  -o Dpkg::Options::="--force-confold"\
  upgrade
 
-apt-get -y install\
- docker.io docker-doc\
- emacs\
- gnuplot\
- gparted\
- language-pack-sv-base\
- libc6:armhf libstdc++6:armhf\
- lxterminal\
- usbmount
+# Install any packages in the configuration file
+xargs ---no-run-if-empty --arg-file=/boot/firmware/cloud-init/packages.txt apt-get install -y
 
-# Workaround for usbmount bug on Bionic
-mkdir -p /etc/systemd/system/systemd-udevd.service.d
-echo "[Service]\nMountFlags=shared\n" >\
- /etc/systemd/system/systemd-udevd.service.d/override.conf
-systemctl daemon-reload
-service systemd-udevd --full-restart
+# Cleanup
+apt-get -y autoremove
 
 echo "*** Setup complete ***"

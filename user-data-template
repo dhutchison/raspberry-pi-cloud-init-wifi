@@ -62,12 +62,10 @@ runcmd:
   # Multi-arch support on aarch64
   - 'dpkg --add-architecture armhf'
 
-  # Set up the WiFi country
-  - 'apt-get update'
-  - 'apt-get -y install iw'
-  - 'iw reg set $WIFI_REGDOMAIN'
-  - 'mv /etc/default/crda /etc/default/crda.bak'
-  - 'echo REGDOMAIN=$WIFI_REGDOMAIN > /etc/default/crda'
+  # ADDED STEP resize filesystem to fit partition
+  # Need partprobe to tell the OS to reload the partitions
+  - 'partprobe'
+  - 'resize2fs /dev/mmcblk0p2'
 
   # Run optional script for additoinal package setup
   - '/bin/sh -e /boot/firmware/cloud-init/setup.sh'
