@@ -18,7 +18,7 @@ apt-get -y\
  upgrade
 
 # Install any packages in the configuration file
-xargs ---no-run-if-empty --arg-file=/boot/firmware/cloud-init/packages.txt apt-get install -y
+xargs --no-run-if-empty --arg-file=/boot/firmware/cloud-init/packages.txt apt-get install -y
 
 # Cleanup
 apt-get -y autoremove
