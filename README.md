@@ -14,9 +14,6 @@ prepared for the user running the config script.
 
 ## Script preparations
 
-* Remove the argument `ipv6.disable=1` from
-  [system-boot/cmdline.txt](system-boot/cmdline.txt) if you have a network
-  connection that can use ipv6.
 * Customize the package selection in
   [system-boot/cloud-init/packages.txt](system-boot/cloud-init/packages.txt).
 

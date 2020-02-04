@@ -31,4 +31,4 @@ read -sp 'Wifi Password: ' WIFI_PASSWD
 
 eval "cat <<~
 $(cat user-data-template)
-~" > system-boot/cloud-init/user-data
+~" > system-boot/user-data
