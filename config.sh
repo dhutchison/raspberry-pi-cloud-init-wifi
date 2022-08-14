@@ -18,7 +18,7 @@ read -p 'Hostname: ' HOSTNAME
 python3 -m pip list | grep passlib 2>&1>/dev/null
 if [ $? -ne 0 ]; then
     # passlib is not installed, install it
-    python3 -m pip insall passlib
+    python3 -m pip install passlib
 fi
 
 # Generate a password hash
